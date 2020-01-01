@@ -86,7 +86,7 @@ let deleteBlog = (req, res) => {
         else {
             res.send(result);
         }
-    });    
+    });
 }
 
 let editBlog = (req, res) => {
@@ -166,8 +166,29 @@ let createBlog = (req, res) => {
 }
 
 let increaseBlogView = (req, res) => {
-    console.log(req.query)
-    res.send(req.query);
+    BlogModel.findOne({ 'blogId': req.params.blogId }, (err, result) => {
+        if (err) {
+            console.warn(err)
+            res.send(err)
+        }
+        else if (result == undefined || result == null || result == '') {
+            console.warn('No Blog foun');
+            res.send('No Blog foun');
+        }
+        else {
+            result.views += 1;
+            result.save((err, result) => {
+                if (err) {
+                    console.warn(err);
+                    res.send(err)
+                }
+                else {
+                    res.send(result);
+                }
+            })
+        }
+
+    })
 }
 
 let testQuery = (req, res) => {
