@@ -41,24 +41,58 @@ let viewByBlogId = (req, res) => {
 }
 
 let viewByAuthor = (req, res) => {
-    console.log(req.query)
-    res.send(req.query);
+    console.log('author', req.params.author)
+    BlogModel.findOne({ 'author': req.params.author }, (err, result) => {
+        if (err) {
+            console.warn(err)
+            res.send(err)
+        }
+        else if (result == undefined || result == null || result == '') {
+            console.warn('No author found');
+            res.send('No author found');
+        }
+        else {
+            res.send(result);
+        }
+    });
 }
 
 let viewByCategory = (req, res) => {
-    console.log(req.query)
-    res.send(req.query);
+    console.log('category', req.params.category)
+    BlogModel.findOne({ 'category': req.params.category }, (err, result) => {
+        if (err) {
+            console.warn(err)
+            res.send(err)
+        }
+        else if (result == undefined || result == null || result == '') {
+            console.warn('No category found');
+            res.send('No category found');
+        }
+        else {
+            res.send(result);
+        }
+    });
 }
 
 let deleteBlog = (req, res) => {
-    console.log(req.query)
-    res.send(req.query);
+    BlogModel.deleteOne({ 'blogId': req.params.blogId }, (err, result) => {
+        if (err) {
+            res.send(err);
+        }
+        else if (result == undefined || result == null || result == '') {
+            console.warn('No Blog foun');
+            res.send('No Blog foun');
+        }
+        else {
+            res.send(result);
+        }
+    });    
 }
 
 let editBlog = (req, res) => {
     let options = req.body;
     console.log(options);
-    console.log(req.params.blogId)   
+    console.log(req.params.blogId)
     BlogModel.update({ 'blogId': req.params.blogId }, options, { multi: true }).exec((err, result) => {
         if (err) {
             console.warn(err)
