@@ -5,11 +5,27 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser')
 
+// adding the middleware
+const errorHandlerMiddleware = require('./middlewares/appErrorHandler')
+// adding route logger
+const routeLoggerMiddleware = require('./middlewares/routeLogger')
 const app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+app.use(errorHandlerMiddleware.globalErrorHandler)
+app.use(routeLoggerMiddleware.logIp)
+
+// bootstrap the model
+let modelPath = './models'
+fs.readdirSync(modelPath).forEach((file) => {
+    if (~file.indexOf('.js')) {
+        console.log("including file modles")
+        require(modelPath + '/' + file)
+    }
+})
 
 
 // bootstrap the routes
@@ -23,14 +39,12 @@ fs.readdirSync(routePath).forEach((file) => {
     }
 });
 
-// bootstrap the model
-let modelPath = './models'
-fs.readdirSync(modelPath).forEach((file) => {
-    if (~file.indexOf('.js')) {
-        console.log("including file modles")
-        require(modelPath + '/' + file)
-    }
-})
+// callling not found route
+// it should be placed after the route 
+// order or route is important
+app.use(errorHandlerMiddleware.notFoundHandler);
+
+
 
 mongoose.connection.on('error', (error) => {
     console.warn("Connection Error occured")

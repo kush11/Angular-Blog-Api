@@ -13,5 +13,6 @@ apiVersion = '/api/v1';
 module.exports = {
     port: appConfig.port,
     db: appConfig.db,
-    apiVersion: apiVersion
+    apiVersion: apiVersion,
+    allowedCorsOrigin: appConfig.allowedCorsOrigin
 }
